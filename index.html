@@ -3,262 +3,571 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-  <title>AI Human Translator 🇮🇩 ↔ 🇬🇧</title>
+  <title>aura · human translator</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
+    /* (keep your existing CSS – unchanged) */
     * {
-      box-sizing: border-box;
       margin: 0;
       padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     }
+
     body {
-      background: #121212;
-      color: #e0e0e0;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-      line-height: 1.5;
-      padding: 16px;
+      background: linear-gradient(145deg, #0b0d15 0%, #1a1c28 100%);
       min-height: 100vh;
       display: flex;
-      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+      color: #eef2fb;
     }
+
     .container {
-      max-width: 600px;
-      margin: 0 auto;
       width: 100%;
-      flex: 1;
+      max-width: 500px;
+      background: rgba(20, 22, 36, 0.6);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: 36px;
+      padding: 24px 20px;
+      box-shadow: 0 30px 50px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.03) inset;
+      border: 1px solid rgba(255, 255, 255, 0.05);
     }
-    h1 {
-      font-size: 1.8rem;
-      font-weight: 400;
-      margin-bottom: 20px;
-      color: #bb86fc;
-      text-align: center;
-    }
-    .input-area {
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       margin-bottom: 24px;
+      padding: 0 8px;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .logo i {
+      font-size: 28px;
+      color: #c0a2ff;
+      filter: drop-shadow(0 4px 8px #8a6de0);
+    }
+    .logo span {
+      font-weight: 600;
+      font-size: 22px;
+      letter-spacing: -0.5px;
+      background: linear-gradient(135deg, #ffffff 0%, #c0a2ff 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .lang-toggle {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 40px;
+      padding: 6px 12px;
+      font-size: 15px;
+      font-weight: 500;
+      color: #cdd3f0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .lang-toggle i {
+      font-size: 14px;
+      color: #a688ff;
+    }
+    .lang-toggle:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .input-area {
+      margin-bottom: 28px;
+    }
+    .input-wrapper {
+      background: rgba(10, 12, 22, 0.6);
+      border-radius: 28px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      padding: 4px 4px 4px 20px;
+      display: flex;
+      align-items: flex-end;
+      transition: border 0.2s, box-shadow 0.2s;
+    }
+    .input-wrapper:focus-within {
+      border-color: #a688ff;
+      box-shadow: 0 0 0 3px rgba(166, 136, 255, 0.2);
     }
     textarea {
+      background: transparent;
+      border: none;
       width: 100%;
-      background: #1e1e1e;
-      border: 1px solid #333;
-      border-radius: 20px;
-      padding: 16px;
-      color: #fff;
-      font-size: 1rem;
-      font-family: inherit;
+      color: white;
+      font-size: 16px;
+      padding: 16px 8px 16px 0;
       resize: none;
       outline: none;
-      transition: border 0.2s;
+      font-weight: 400;
+      line-height: 1.5;
+      max-height: 200px;
     }
-    textarea:focus {
-      border-color: #bb86fc;
+    textarea::placeholder {
+      color: rgba(255, 255, 255, 0.3);
+      font-weight: 300;
     }
+    .input-wrapper button {
+      background: #a688ff;
+      border: none;
+      width: 48px;
+      height: 48px;
+      border-radius: 40px;
+      color: white;
+      font-size: 18px;
+      cursor: pointer;
+      transition: 0.15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 10px 20px -5px #5f3dc0;
+    }
+    .input-wrapper button:hover {
+      background: #b59eff;
+      transform: scale(1.02);
+    }
+
     .results {
       display: flex;
       flex-direction: column;
       gap: 16px;
+      margin-bottom: 24px;
+      max-height: 500px;
+      overflow-y: auto;
+      padding-right: 4px;
     }
-    .chat-bubble {
-      background: #1e1e1e;
-      border-radius: 20px 20px 20px 4px;
-      padding: 16px;
-      border-left: 4px solid #bb86fc;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+    .results::-webkit-scrollbar {
+      width: 4px;
     }
-    .original {
-      font-size: 0.9rem;
-      color: #aaa;
+    .results::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .results::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 20px;
+    }
+
+    .bubble {
+      background: rgba(30, 33, 48, 0.7);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-radius: 24px 24px 24px 4px;
+      padding: 16px 18px;
+      border: 1px solid rgba(255, 255, 255, 0.03);
+      box-shadow: 0 20px 30px -15px rgba(0, 0, 0, 0.5);
+      animation: fadeIn 0.3s ease;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .original-text {
+      font-size: 14px;
+      color: #a5b0d9;
       margin-bottom: 8px;
       word-break: break-word;
+      padding-left: 4px;
     }
-    .translation-main {
-      font-size: 1.2rem;
+
+    .translation-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+    .tone-badge {
+      background: rgba(166, 136, 255, 0.15);
+      color: #c6b4ff;
+      border-radius: 40px;
+      padding: 4px 12px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .actions {
+      display: flex;
+      gap: 10px;
+    }
+    .actions button {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: #b9c2ec;
+      width: 34px;
+      height: 34px;
+      border-radius: 40px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.15s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .actions button:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      border-color: #a688ff;
+    }
+
+    .main-translation {
+      font-size: 18px;
       font-weight: 500;
-      color: #fff;
-      margin-bottom: 8px;
+      color: white;
+      margin-bottom: 12px;
+      line-height: 1.4;
       word-break: break-word;
+      padding: 0 4px;
     }
+
     .alternatives {
-      margin-top: 8px;
-      padding-top: 8px;
-      border-top: 1px dashed #333;
+      margin-top: 12px;
+      border-top: 1px dashed rgba(255, 255, 255, 0.1);
+      padding-top: 12px;
     }
     .alt-item {
-      background: #2a2a2a;
-      border-radius: 12px;
-      padding: 8px 12px;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 18px;
+      padding: 10px 14px;
       margin: 6px 0;
-      font-size: 0.95rem;
-      color: #ccc;
+      font-size: 15px;
+      color: #d0d8ff;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      border: 1px solid rgba(255, 255, 255, 0.02);
     }
-    .tone-tag {
-      display: inline-block;
-      background: #2a2a2a;
-      color: #bb86fc;
-      border-radius: 16px;
-      padding: 4px 12px;
-      font-size: 0.75rem;
-      text-transform: capitalize;
-      margin-right: 8px;
-    }
-    .copy-btn {
-      background: none;
-      border: 1px solid #444;
-      color: #bbb;
-      border-radius: 16px;
-      padding: 4px 10px;
-      font-size: 0.75rem;
-      cursor: pointer;
-      transition: all 0.2s;
-      margin-left: 8px;
-    }
-    .copy-btn:hover {
-      background: #333;
-      color: #fff;
-    }
-    .footer {
-      text-align: center;
+
+    .suggest-panel {
+      background: rgba(20, 22, 36, 0.9);
+      backdrop-filter: blur(20px);
+      border-radius: 28px;
+      padding: 20px;
       margin-top: 20px;
-      color: #666;
-      font-size: 0.8rem;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.5);
+      transition: 0.3s;
+    }
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    .panel-header h4 {
+      font-weight: 500;
+      color: #cdd3f0;
+    }
+    .panel-header i {
+      color: #a688ff;
+      font-size: 20px;
+      cursor: pointer;
+    }
+    .category-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+    .category-chip {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 40px;
+      padding: 8px 16px;
+      font-size: 13px;
+      font-weight: 500;
+      color: #b0b9e6;
+      cursor: pointer;
+      transition: 0.15s;
+    }
+    .category-chip:hover {
+      background: rgba(166, 136, 255, 0.2);
+      border-color: #a688ff;
+      color: white;
+    }
+    .category-chip.active {
+      background: #a688ff;
+      border-color: #a688ff;
+      color: white;
+    }
+    .reply-results {
+      background: rgba(0, 0, 0, 0.25);
+      border-radius: 20px;
+      padding: 16px;
+    }
+    .reply-item {
+      background: rgba(255, 255, 255, 0.02);
+      border-radius: 16px;
+      padding: 12px 16px;
+      margin: 8px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border: 1px solid rgba(255, 255, 255, 0.02);
+    }
+    .reply-item button {
+      background: none;
+      border: none;
+      color: #a688ff;
+      font-size: 18px;
+      cursor: pointer;
+      padding: 6px;
     }
     .loading {
       text-align: center;
-      color: #bb86fc;
+      color: #a688ff;
       padding: 20px;
     }
-    .error-msg {
-      color: #cf6679;
+
+    .footer-note {
       text-align: center;
-      padding: 10px;
+      margin-top: 20px;
+      color: rgba(255, 255, 255, 0.25);
+      font-size: 12px;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>🌐 Human Translator</h1>
+    <div class="header">
+      <div class="logo">
+        <i class="fas fa-magic"></i>
+        <span>aura</span>
+      </div>
+      <div class="lang-toggle" id="langToggle">
+        <span>ID</span>
+        <i class="fas fa-arrow-right"></i>
+        <span>EN</span>
+      </div>
+    </div>
+
     <div class="input-area">
-      <textarea id="inputText" rows="3" placeholder="Type or paste Indonesian/English... (auto-translates)"></textarea>
+      <div class="input-wrapper">
+        <textarea id="inputText" rows="2" placeholder="Type in Indonesian..."></textarea>
+        <button id="clearBtn"><i class="fas fa-times"></i></button>
+      </div>
     </div>
-    <div id="results" class="results">
-      <!-- dynamic bubbles appear here -->
+
+    <div id="results" class="results"></div>
+
+    <div id="suggestPanel" class="suggest-panel" style="display: none;">
+      <div class="panel-header">
+        <h4><i class="fas fa-robot" style="margin-right: 8px;"></i> suggest replies</h4>
+        <i class="fas fa-chevron-down" id="closePanel"></i>
+      </div>
+      <div class="category-grid" id="categoryGrid"></div>
+      <div id="replyResults" class="reply-results">
+        <div style="text-align: center; color: #7b84b0;">select a category</div>
+      </div>
     </div>
-    <div class="footer">⚡ Powered by Gemini AI • Free & human-like</div>
+
+    <div class="footer-note">human‑like translations · reply suggestions</div>
   </div>
 
   <script>
+    // ---------- CONFIGURATION ----------
+    // IMPORTANT: Replace with your actual backend URL (no trailing slash)
+    const API_BASE = 'https://translator-backend-lc5b.onrender.com'; 
+
+    // ---------- DOM elements ----------
     const inputEl = document.getElementById('inputText');
     const resultsEl = document.getElementById('results');
-    let debounceTimer;
+    const clearBtn = document.getElementById('clearBtn');
+    const langToggle = document.getElementById('langToggle');
+    const suggestPanel = document.getElementById('suggestPanel');
+    const closePanel = document.getElementById('closePanel');
+    const categoryGrid = document.getElementById('categoryGrid');
+    const replyResults = document.getElementById('replyResults');
 
-    // Debounced translation
+    // ---------- state ----------
+    let currentLangSource = 'id';
+    let currentLangTarget = 'en';
+    let debounceTimer;
+    let lastOriginalText = '';
+
+    const categories = [
+      "friendly", "playful", "love and caring", "supportive", "tease",
+      "naughty", "romantic and sexy", "full sexiest and sex type",
+      "full romantic intimate", "erotic turn on", "sexual desires flirting"
+    ];
+
+    function renderCategories() {
+      categoryGrid.innerHTML = categories.map(cat => 
+        `<span class="category-chip" data-cat="${cat}">${cat}</span>`
+      ).join('');
+      document.querySelectorAll('.category-chip').forEach(chip => {
+        chip.addEventListener('click', () => {
+          document.querySelectorAll('.category-chip').forEach(c => c.classList.remove('active'));
+          chip.classList.add('active');
+          fetchReplies(chip.dataset.cat);
+        });
+      });
+    }
+    renderCategories();
+
     inputEl.addEventListener('input', () => {
       clearTimeout(debounceTimer);
-      debounceTimer = setTimeout(() => {
-        translate();
-      }, 500); // 500ms debounce
+      debounceTimer = setTimeout(translate, 300);
+    });
+
+    clearBtn.addEventListener('click', () => {
+      inputEl.value = '';
+      resultsEl.innerHTML = '';
+      lastOriginalText = '';
+      suggestPanel.style.display = 'none';
     });
 
     async function translate() {
       const rawText = inputEl.value;
-      // Split by newline, filter empty lines
       const lines = rawText.split('\n').filter(line => line.trim() !== '');
-      
       if (lines.length === 0) {
         resultsEl.innerHTML = '';
+        suggestPanel.style.display = 'none';
         return;
       }
 
-      // Show loading
-      resultsEl.innerHTML = '<div class="loading">🤖 Translating...</div>';
+      lastOriginalText = lines.join('\n');
+      resultsEl.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-pulse"></i> translating...</div>';
 
       try {
-        const response = await fetch('/translate', {
+        const response = await fetch(`${API_BASE}/translate`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ texts: lines })
         });
 
+        // Check if response is OK before parsing JSON
         if (!response.ok) {
-          throw new Error(`HTTP ${response.status}`);
+          const errorText = await response.text();
+          throw new Error(`Server error ${response.status}: ${errorText}`);
         }
 
         const data = await response.json();
-        renderResults(data);
+        renderTranslations(data);
+        suggestPanel.style.display = 'block';
       } catch (err) {
         console.error(err);
-        resultsEl.innerHTML = `<div class="error-msg">❌ Translation failed. Please try again.</div>`;
+        resultsEl.innerHTML = `<div class="bubble" style="color: #ff8a8a;">❌ translation error: ${err.message}</div>`;
       }
     }
 
-    function renderResults(translations) {
-      if (!translations.length) {
-        resultsEl.innerHTML = '';
-        return;
-      }
-
+    function renderTranslations(translations) {
       let html = '';
       translations.forEach(item => {
         const main = item.translation_main || item.original;
-        const alternatives = item.alternatives || [];
         const tone = item.tone || 'neutral';
+        const alt = item.alternatives || [];
+        const originalEsc = escapeHtml(item.original);
+        const mainEsc = escapeHtml(main);
+        const toneEsc = escapeHtml(tone);
 
-        html += `
-          <div class="chat-bubble">
-            <div class="original">${escapeHtml(item.original)}</div>
-            <div class="translation-main">
-              <span class="tone-tag">${escapeHtml(tone)}</span>
-              ${escapeHtml(main)}
-              <button class="copy-btn" onclick="copyText('${escapeHtml(main).replace(/'/g, "\\'")}')">📋 Copy</button>
-            </div>
-        `;
+        html += `<div class="bubble">`;
+        html += `<div class="original-text">${originalEsc}</div>`;
+        html += `<div class="translation-header">`;
+        html += `<span class="tone-badge">${toneEsc}</span>`;
+        html += `<div class="actions">`;
+        html += `<button onclick="copyText('${mainEsc.replace(/'/g, "\\'")}')" title="copy"><i class="far fa-copy"></i></button>`;
+        html += `<button onclick="speakText('${mainEsc.replace(/'/g, "\\'")}')" title="listen"><i class="fas fa-volume-up"></i></button>`;
+        html += `</div></div>`;
+        html += `<div class="main-translation">${mainEsc}</div>`;
 
-        if (alternatives.length > 0) {
+        if (alt.length > 0) {
           html += `<div class="alternatives">`;
-          alternatives.forEach(alt => {
-            html += `
-              <div class="alt-item">
-                <span>${escapeHtml(alt)}</span>
-                <button class="copy-btn" onclick="copyText('${escapeHtml(alt).replace(/'/g, "\\'")}')">Copy</button>
-              </div>
-            `;
+          alt.forEach(a => {
+            const aEsc = escapeHtml(a);
+            html += `<div class="alt-item"><span>${aEsc}</span> <button onclick="copyText('${aEsc.replace(/'/g, "\\'")}')" style="background:none; border:none; color:#a688ff;"><i class="far fa-copy"></i></button></div>`;
           });
           html += `</div>`;
         }
-
         html += `</div>`;
       });
-
       resultsEl.innerHTML = html;
     }
 
-    // Helper to escape HTML special characters
-    function escapeHtml(unsafe) {
-      if (!unsafe) return '';
-      return unsafe
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
+    async function fetchReplies(category) {
+      if (!lastOriginalText) return;
+      replyResults.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-pulse"></i> generating...</div>';
+      try {
+        const response = await fetch(`${API_BASE}/suggest-replies`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text: lastOriginalText, category })
+        });
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(`Server error ${response.status}`);
+        }
+
+        const replies = await response.json();
+        displayReplies(replies);
+      } catch (err) {
+        console.error(err);
+        replyResults.innerHTML = '<div style="color: #ff8a8a;">failed to generate</div>';
+      }
     }
 
-    // Copy to clipboard
+    function displayReplies(replies) {
+      if (!replies || replies.length === 0) {
+        replyResults.innerHTML = '<div style="color: #7b84b0;">no replies generated</div>';
+        return;
+      }
+      let html = '';
+      replies.forEach(r => {
+        const rEsc = escapeHtml(r);
+        html += `<div class="reply-item"><span>${rEsc}</span> <button onclick="copyText('${rEsc.replace(/'/g, "\\'")}')"><i class="far fa-copy"></i></button></div>`;
+      });
+      replyResults.innerHTML = html;
+    }
+
+    closePanel.addEventListener('click', () => {
+      suggestPanel.style.display = 'none';
+    });
+
+    function escapeHtml(unsafe) {
+      if (!unsafe) return '';
+      return unsafe.replace(/[&<>"]/g, function(m) {
+        if(m === '&') return '&amp;';
+        if(m === '<') return '&lt;';
+        if(m === '>') return '&gt;';
+        if(m === '"') return '&quot;';
+        return m;
+      });
+    }
+
     window.copyText = function(text) {
       navigator.clipboard.writeText(text).then(() => {
-        // Optional: show a small toast
-        alert('✅ Copied!');
-      }).catch(err => {
-        console.error('Copy failed', err);
-      });
+        alert('✅ copied');
+      }).catch(() => alert('❌ copy failed'));
     };
 
-    // Auto-resize textarea
-    inputEl.addEventListener('input', function() {
-      this.style.height = 'auto';
-      this.style.height = (this.scrollHeight) + 'px';
+    window.speakText = function(text) {
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'en-US';
+      speechSynthesis.speak(utterance);
+    };
+
+    langToggle.addEventListener('click', () => {
+      if (currentLangSource === 'id') {
+        currentLangSource = 'en';
+        currentLangTarget = 'id';
+        langToggle.innerHTML = `<span>EN</span><i class="fas fa-arrow-right"></i><span>ID</span>`;
+      } else {
+        currentLangSource = 'id';
+        currentLangTarget = 'en';
+        langToggle.innerHTML = `<span>ID</span><i class="fas fa-arrow-right"></i><span>EN</span>`;
+      }
     });
   </script>
 </body>
