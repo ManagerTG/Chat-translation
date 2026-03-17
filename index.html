@@ -1,146 +1,138 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Translator Pro</title>
+  <meta charset="UTF-8">
+  <title>Translator Pro</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<style>
-body {
-  margin:0;
-  font-family: system-ui;
-  background:#0f172a;
-  color:white;
-}
-.container {
-  padding:15px;
-}
-textarea {
-  width:100%;
-  height:140px;
-  border-radius:12px;
-  padding:10px;
-  font-size:14px;
-}
-select, button {
-  width:100%;
-  margin-top:8px;
-  padding:12px;
-  border-radius:10px;
-  font-size:14px;
-}
-.card {
-  background:#1e293b;
-  padding:12px;
-  margin-top:10px;
-  border-radius:10px;
-}
-.copy {
-  margin-top:6px;
-  background:#22c55e;
-  border:none;
-  padding:6px 12px;
-  border-radius:6px;
-  color:white;
-}
-.header {
-  font-size:20px;
-  margin-bottom:10px;
-  font-weight:bold;
-}
-.loading {
-  text-align:center;
-  margin-top:15px;
-  color:#94a3b8;
-}
-</style>
+  <style>
+    body {
+      font-family: Arial;
+      background: #0f172a;
+      color: white;
+      padding: 15px;
+    }
+
+    h2 {
+      margin-bottom: 10px;
+    }
+
+    textarea {
+      width: 100%;
+      height: 120px;
+      border-radius: 10px;
+      padding: 10px;
+      border: none;
+      outline: none;
+      font-size: 15px;
+    }
+
+    select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 10px;
+      border: none;
+    }
+
+    .card {
+      background: #1e293b;
+      padding: 12px;
+      border-radius: 12px;
+      margin-top: 10px;
+    }
+
+    .small {
+      opacity: 0.7;
+      font-size: 13px;
+    }
+
+    .loading {
+      margin-top: 10px;
+      color: #38bdf8;
+    }
+  </style>
 </head>
 
 <body>
 
-<div class="container">
+<h2>⚡ Translator Pro</h2>
 
-<div class="header">⚡ Translator Pro</div>
-
-<textarea id="input" placeholder="Paste chats (one per line)..."></textarea>
+<textarea id="input" placeholder="Paste Indonesian text here..."></textarea>
 
 <select id="source">
   <option value="auto">Auto Detect</option>
-  <option value="Indonesian">Indonesian</option>
-  <option value="Hindi">Hindi</option>
-  <option value="English">English</option>
+  <option value="id">Indonesian</option>
 </select>
 
 <select id="target">
-  <option value="English">English</option>
-  <option value="Hindi">Hindi</option>
+  <option value="en">English</option>
+  <option value="hi">Hindi</option>
 </select>
 
-<button onclick="run()">Translate</button>
-
-<div id="out"></div>
-
-</div>
+<div id="status" class="loading"></div>
+<div id="output"></div>
 
 <script>
+const BACKEND = "https://translator-backend-lc5b.onrender.com/translate";
 
-const BACKEND = "https://translator-backend-lc5b.onrender.com"; // 🔥 your backend
+let timeout = null;
 
-async function run() {
+document.getElementById("input").addEventListener("input", () => {
+  clearTimeout(timeout);
+  timeout = setTimeout(runTranslate, 600); // debounce for speed
+});
 
-  const input = document.getElementById("input").value;
+async function runTranslate() {
+  const text = document.getElementById("input").value.trim();
+  const status = document.getElementById("status");
+  const output = document.getElementById("output");
 
-  if (!input.trim()) {
-    alert("Enter some text first");
+  if (!text) {
+    output.innerHTML = "";
     return;
   }
 
-  const lines = input.split("\n").filter(l => l.trim());
-
-  document.getElementById("out").innerHTML = 
-    "<div class='loading'>⏳ Translating...</div>";
+  status.innerText = "Translating...";
+  output.innerHTML = "";
 
   try {
-
-    const res = await fetch(`${BACKEND}/translate`, {
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
+    const res = await fetch(BACKEND, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
       body: JSON.stringify({
-        texts: lines,
+        texts: text.split("\n"),
         source: document.getElementById("source").value,
         target: document.getElementById("target").value
       })
     });
 
-    if (!res.ok) {
-      throw new Error("Server error");
-    }
-
     const data = await res.json();
+
+    status.innerText = "";
 
     let html = "";
 
-    data.forEach((item,i)=>{
+    data.forEach(item => {
       html += `
-      <div class="card">
-        <b>${i+1}.</b><br>
-        ${item.translation}
-        <br>
-        <button class="copy" onclick="copyText(\`${item.translation}\`)">Copy</button>
-      </div>`;
+        <div class="card">
+          <div class="small">Original:</div>
+          <div>${item.original}</div>
+
+          <div class="small">Translation:</div>
+          <div><b>${item.translation}</b></div>
+        </div>
+      `;
     });
 
-    document.getElementById("out").innerHTML = html;
+    output.innerHTML = html;
 
   } catch (err) {
-    document.getElementById("out").innerHTML = 
-      "<div class='loading'>❌ Error connecting to server</div>";
+    status.innerText = "❌ Error connecting to server";
   }
 }
-
-function copyText(text){
-  navigator.clipboard.writeText(text);
-}
-
 </script>
 
 </body>
